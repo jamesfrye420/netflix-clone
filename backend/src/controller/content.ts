@@ -54,18 +54,26 @@ const genresRemap = (arr: { _id: mongoose.Types.ObjectId; id: number; name: stri
 };
 
 const getRandomGenres = async (caps_content: string) => {
-  // get a random set of genres and store it in the random_genre var
+  // get a random set of genres and store it in the random_genre var4
+
   let random_genres: string[];
+
   // gets the random genres from the cache memory, if it doesnt exists, query the database and cache it
+
   const redisContentGenres = await redis_client.get(`random${caps_content}Genres`);
+
   if (!redisContentGenres) {
     const fetchRandom_genres =
       caps_content === 'Movie'
         ? await movieGenres.aggregate([{ $sample: { size: 4 } }])
         : await seriesGenres.aggregate([{ $sample: { size: 4 } }]);
+
     // remap the mongoose return query to return the genre name only
+
     random_genres = fetchRandom_genres.map((genre) => genre.name);
+
     // randomMovieGenres or randomTvGenres
+
     redis_client.setEx(`random${caps_content}Genres`, 86400, JSON.stringify(random_genres));
   } else {
     random_genres = JSON.parse(redisContentGenres);
@@ -195,6 +203,11 @@ export const getBrowseContent = async (req: RequestBody, res: Response, next: Ne
         const getPath = `/discover/${content}`;
         if (item.length <= 0) {
           const genre = random_genres[index];
+
+          // the stupid tmdb api returns the same result for all genres
+          //  to get different movies, for each genres we iterate through different pages which is
+          // (index number of the genre in the random_genres array +1)
+
           return getContent(getPath, next, genre, index + 1, genre);
         }
         return item;

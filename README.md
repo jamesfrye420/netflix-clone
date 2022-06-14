@@ -59,7 +59,8 @@
 ```
 cd backend
 yarn install
-yarn start
+yarn watch
+yarn dev
 ```
 
 Application will be serving on http://localhost:8080
@@ -70,8 +71,8 @@ Application will be serving on http://localhost:8080
 
 ```
 cd web-client
-npm install
-npm start
+yarn install
+yarn dev
 ```
 
 Application will be serving on http://localhost:3000
