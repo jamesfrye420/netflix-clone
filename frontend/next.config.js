@@ -38,7 +38,7 @@ const nextConfig = (phase) => {
     reactStrictMode,
     images,
     env: {
-      url: 'http://localhost:8080',
+      // url: address of production api server,
     },
     compiler,
     redirects,

@@ -3,6 +3,8 @@
 # dependencies
 .vscode
 node_modules
+server.cert
+server.key
 /frontend/.pnp
 /frontend/.pnp.js
 
