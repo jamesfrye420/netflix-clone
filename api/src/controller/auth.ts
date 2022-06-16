@@ -19,8 +19,6 @@ interface Signup extends Signin {
   photoURL: string;
 }
 
-const hostURL = 'http://localhost:8080/';
-
 export const postSignin = async (req: Request<{}, {}, Signin, {}>, res: Response, next: NextFunction) => {
   const email = req.body.email;
   const password = req.body.password;
@@ -62,6 +60,8 @@ export const postSignin = async (req: Request<{}, {}, Signin, {}>, res: Response
       .status(200)
       .json({ message: 'login successful', token: token, userId: loadedUser._id.toString(), User: loadedUser });
   } catch (error) {
+    console.log(error);
+
     errorHandler(error, next);
   }
 };
@@ -90,7 +90,7 @@ export const putSignup = async (req: Request<{}, {}, Signup, {}>, res: Response,
       firstName,
       email,
       password: hashedPassword,
-      photoURL: `${hostURL}images/users/${photoURL}.png`,
+      photoURL: `images/users/${photoURL}.png`,
     });
     const savedUser = await user.save();
     if (!savedUser) {
