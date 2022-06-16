@@ -57,7 +57,7 @@
 - Install Dependencies
 
 ```
-cd backend
+cd api
 yarn install
 yarn watch
 yarn dev
@@ -70,7 +70,7 @@ Application will be serving on http://localhost:8080
 - install dependencies & start application
 
 ```
-cd web-client
+cd frontend
 yarn install
 yarn dev
 ```
