@@ -69,7 +69,7 @@ const Browse: NextPage<Props> = ({ content, configuration }: InferGetStaticProps
 
   return profile.displayName ? (
     <>
-      {isValidating ? <Loading src={User.photoURL} /> : <Loading.ReleaseBody />}
+      {isValidating ? <Loading src={`${process.env.url}/${User.photoURL}`} /> : <Loading.ReleaseBody />}
       <Header
         src={`${configuration.images.base_url}original${content.TopRated[random_number].backdrop_path}`}
         dontShowOnSmallViewPort={true}
@@ -103,10 +103,10 @@ const Browse: NextPage<Props> = ({ content, configuration }: InferGetStaticProps
           <Header.Group>
             <Header.Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
             <Header.Profile>
-              <Header.Picture src={User.photoURL} />
+              <Header.Picture src={`${process.env.url}/${User.photoURL}`} />
               <Header.Dropdown>
                 <Header.Group>
-                  <Header.Picture src={User.photoURL} />
+                  <Header.Picture src={`${process.env.url}/${User.photoURL}`} />
                   <Header.TextLink>{User.firstName}</Header.TextLink>
                 </Header.Group>
                 <Header.Group>
@@ -188,6 +188,7 @@ export const getStaticProps: GetStaticProps<Props, Params> = async ({ params }) 
         content: browseData.content,
         configuration: configData.configuration,
       },
+      revalidate: 10800,
     };
   } catch (error) {
     return {

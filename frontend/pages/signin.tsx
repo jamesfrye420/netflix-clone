@@ -48,7 +48,7 @@ const Signin: NextPage = () => {
     event.preventDefault();
     try {
       setAuthLoading(true);
-      const response = await axios.post<SigninResponse>(
+      const { data, status } = await axios.post<SigninResponse>(
         url,
         {
           email: emailAddress,
@@ -60,12 +60,13 @@ const Signin: NextPage = () => {
           },
         }
       );
-      if (response.statusText !== 'OK') {
+      if (status !== 200) {
         setAuthLoading(false);
         throw new Error('Could not authenticate you!');
       }
-      //if the user is authinticed we get back a token, saving the token
-      Cookies.set('token', response.data.token, { expires: 60 });
+
+      //if the user is authenticated we get back a token, saving the token
+      Cookies.set('token', data.token, { expires: 60 });
       setAuthLoading(false);
       router.push('/browse');
       //redirect

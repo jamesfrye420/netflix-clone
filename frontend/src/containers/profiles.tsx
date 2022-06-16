@@ -31,7 +31,7 @@ export function SelectProfileContainer({ user, setProfile }: Props) {
         <Profiles.Title>Who's watching?</Profiles.Title>
         <Profiles.List>
           <Profiles.User onClick={() => setProfile({ displayName: user.firstName, photoURL: user.photoURL })}>
-            <Profiles.Picture src={user.photoURL} />
+            <Profiles.Picture src={`${process.env.url}/${user.photoURL}`} />
             <Profiles.Name>{user.firstName}</Profiles.Name>
           </Profiles.User>
         </Profiles.List>

@@ -35,10 +35,9 @@ const nextConfig = (phase) => {
   }
 
   return {
-    reactStrictMode,
     images,
     env: {
-      // url: address of production api server,
+      url: 'https://e913-143-110-184-39.in.ngrok.io',
     },
     compiler,
     redirects,
