@@ -1,12 +1,13 @@
 import axios, { AxiosResponse } from 'axios';
 import mongoose from 'mongoose';
-import { errorHandler } from '../utils/errorHandler';
+import { errorHandler, ErrorType } from '../utils/errorHandler';
 import { RequestBody } from '../middleware/is-auth';
 
 import redis_client from '../utils/redisClient';
 
 import movieGenres from '../models/movieGenres';
 import seriesGenres from '../models/seriesGenres';
+import User from '../models/user';
 
 import { NextFunction, Response } from 'express';
 
@@ -202,7 +203,7 @@ export const getBrowseContent = async (req: RequestBody, res: Response, next: Ne
       cachedCurated.map((item, index) => {
         const getPath = `/discover/${content}`;
         if (item.length <= 0) {
-          const genre = random_genres[index];
+          const genre: string = random_genres[index];
 
           // the stupid tmdb api returns the same result for all genres
           //  to get different movies, for each genres we iterate through different pages which is
@@ -236,6 +237,52 @@ export const getBrowseContent = async (req: RequestBody, res: Response, next: Ne
       }
     }
     res.status(200).json({ message: 'Heres a list of content', content: { TopRated: topRated, ...remappedCurated } });
+  } catch (error) {
+    errorHandler(error, next);
+  }
+};
+
+export const patchUpdateWatchLater = async (req: RequestBody, res: Response, next: NextFunction) => {
+  const userId = req.userId;
+  const slug = req.params.slug as string;
+  const slugContentId = +req.params.id;
+  if (!userId || !slugContentId) {
+    return res.status(401).json({ message: 'not authorized or missing essential params' });
+  }
+  try {
+    const user = await User.findById(req.userId);
+    if (!user) {
+      const error: ErrorType = new Error('user not found');
+      error.statusCode = 404;
+      throw error;
+    }
+    let WatchListMovies = user.watchLater.movies,
+      WatchListSeries = user.watchLater.series;
+    if (slug === 'movies') {
+      WatchListMovies = user.watchLater.movies.filter((movieId: number) => {
+        return movieId !== slugContentId;
+      });
+      if (WatchListMovies.length === user.watchLater.movies.length) {
+        WatchListMovies.push(slugContentId);
+      }
+    } else {
+      WatchListSeries = user.watchLater.series.filter((movieId: number) => {
+        return movieId !== slugContentId;
+      });
+      if (WatchListSeries.length === user.watchLater.series.length) {
+        WatchListSeries.push(slugContentId);
+      }
+    }
+    const updatedWatchLater = {
+      movies: WatchListMovies,
+      series: WatchListSeries,
+    };
+    user.watchLater = updatedWatchLater;
+    const updatedUser = await user.save();
+    if (!updatedUser) {
+      //cache it in redis and have a worker function to try again later
+    }
+    return res.json({ message: 'successful', userId, user });
   } catch (error) {
     errorHandler(error, next);
   }

@@ -142,6 +142,13 @@ const Browse: NextPage<Props> = ({ content, configuration }: InferGetStaticProps
                 <Card.Item key={item.id} item={{ ...item, genre: item.genres[0] }}>
                   <Card.Image src={`${configuration.images.base_url}w500${item.poster_path}`} />
                   <Card.Meta>
+                    <Card.IsFavourite
+                      isFavourite={
+                        slug === 'movies' ? User.watchLater.movies.includes(item.id) : User.watchLater.series.includes(item.id)
+                      }
+                      slug={slug as string}
+                      contentId={item.id}
+                    />
                     <Card.SubTitle>{item.title}</Card.SubTitle>
                     <Card.Text>{item.overview}</Card.Text>
                   </Card.Meta>

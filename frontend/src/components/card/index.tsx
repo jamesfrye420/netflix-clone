@@ -1,4 +1,4 @@
-import React, { useState, useContext, createContext } from 'react';
+import React, { useState, useContext, createContext, useEffect } from 'react';
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 import NextImage from 'next/image';
@@ -19,7 +19,11 @@ import {
   Meta,
   Item,
   Image,
+  IsFavourite,
 } from './styles/card';
+import axios from 'axios';
+import { useRouter } from 'next/router';
+import Cookies from 'js-cookie';
 
 interface Props {
   children: React.ReactNode;
@@ -125,6 +129,39 @@ Card.Title = function CardTitle({ children, ...restProps }: Props) {
 
 Card.SubTitle = function CardSubTitle({ children, ...restProps }: Props) {
   return <SubTitle {...restProps}>{children}</SubTitle>;
+};
+
+Card.IsFavourite = function CardIsFavourite({
+  isFavourite = false,
+  slug,
+  contentId,
+}: {
+  isFavourite: boolean;
+  slug: string;
+  contentId: number;
+}) {
+  const [inWatchLater, setInWatchLater] = useState(isFavourite);
+  useEffect(() => {
+    setInWatchLater(isFavourite);
+  }, [isFavourite]);
+  const updateWatchListHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    setInWatchLater((prev) => !prev);
+    const response = axios({
+      method: 'PATCH',
+      url: `content/${slug}/updateWatchlist/${contentId}`,
+      baseURL: `${process.env.url}`,
+      headers: {
+        Authorization: `Bearer ${Cookies.get('token')}`,
+      },
+    });
+  };
+
+  return (
+    <IsFavourite onClick={updateWatchListHandler}>
+      {inWatchLater ? <img src="/icons/heart_full.png" alt="added" /> : <img src="/icons/heart_empty.png" alt="NotAdded" />}
+    </IsFavourite>
+  );
 };
 
 Card.Text = function CardText({ children, ...restProps }: Props) {

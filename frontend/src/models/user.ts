@@ -4,5 +4,5 @@ export default interface User {
   email: string;
   password: string;
   photoURL: string;
-  watchLater: { movies: string[]; series: string[] }[];
+  watchLater: { movies: number[]; series: number[] };
 }

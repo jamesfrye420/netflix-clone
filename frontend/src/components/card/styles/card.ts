@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 export const Title = styled.p`
   font-size: 24px;
+
   color: #e5e5e5;
   font-weight: bold;
   margin-left: 56px;
@@ -40,6 +41,8 @@ export const Group = styled.div<{ flexDirection?: string; alignItems?: string; m
 
 export const SubTitle = styled.p`
   font-size: 12px;
+  position: relative;
+  top: 60%;
   color: #fff;
   font-weight: bold;
   margin-top: 0;
@@ -56,6 +59,8 @@ export const Entities = styled.div`
 export const Text = styled.p`
   margin-top: 5px;
   font-size: 10px;
+  position: relative;
+  top: 65%;
   color: #fff;
   margin-bottom: 0;
   user-select: none;
@@ -63,11 +68,27 @@ export const Text = styled.p`
   line-height: normal;
 `;
 
+export const IsFavourite = styled.button`
+  color: white;
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  cursor: pointer;
+  background-color: transparent;
+  border: 0;
+  img {
+    filter: brightness(0) invert(1);
+    width: 24px;
+  }
+`;
+
 export const Meta = styled.div`
   display: none;
   position: absolute;
   bottom: 0;
-  padding: 10px;
+  top: 0;
+  right: 0;
+  padding: 15px;
   background-color: #0000008f;
 `;
 
