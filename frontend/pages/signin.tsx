@@ -34,8 +34,6 @@ const Signin: NextPage = () => {
     redirectIfFound: true,
   });
 
-  // const { userId, isLoading, error, isAuthenticated, setRedirectTo, setRedirectIfFound } = useContext(AuthContext);
-
   const [emailAddress, setEmailAddress] = useState('');
   const [password, setPassword] = useState('');
 
@@ -66,7 +64,10 @@ const Signin: NextPage = () => {
       }
 
       //if the user is authenticated we get back a token, saving the token
-      Cookies.set('token', data.token, { expires: 60 });
+      const now = new Date().getTime();
+      Cookies.set('token', data.token, { expires: 23 });
+      localStorage.setItem('userId', data.userId);
+      localStorage.setItem('Expiration', `${now + 1000 * 60 * 60 * 24 * 23}`);
       setAuthLoading(false);
       router.push('/browse');
       //redirect

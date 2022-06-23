@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -65,6 +65,51 @@ const Browse: NextPage<Props> = ({ content, configuration }: InferGetStaticProps
     redirectTo: '/signin',
   });
 
+  // check for the expiration time left and runs a setTime out at the specific interval
+  useEffect(() => {
+    const expirationDuration = localStorage.getItem('Expiration');
+    let timeoutId: NodeJS.Timeout;
+
+    const currentTime = new Date().getTime();
+    if (!expirationDuration || currentTime > +expirationDuration) {
+      Cookies.remove('token');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('Expiration');
+      router.replace('/signin');
+    } else {
+      const interval = +expirationDuration - currentTime;
+      const timer = () =>
+        setTimeout(() => {
+          Cookies.remove('token');
+          localStorage.removeItem('userId');
+          localStorage.removeItem('Expiration');
+          router.replace('/signin');
+        }, interval);
+
+      timeoutId = timer();
+    }
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, []);
+
+  // check if the value has been tampered with, if true then sign out the user
+  useEffect(() => {
+    const handleValidationToken = (e: any) => {
+      if ((e.key === 'userId' && e.oldValue && !e.newValue) || !(e.key === 'userId')) {
+        Cookies.remove('token');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('Expiration');
+        router.replace('/signin');
+      }
+    };
+    window.addEventListener('storage', handleValidationToken);
+    return () => {
+      window.removeEventListener('storage', handleValidationToken);
+    };
+  }, []);
+
   const User = fetchedData?.User as User;
 
   return profile.displayName ? (
@@ -113,6 +158,8 @@ const Browse: NextPage<Props> = ({ content, configuration }: InferGetStaticProps
                   <Header.TextLink
                     onClick={() => {
                       Cookies.remove('token');
+                      localStorage.removeItem('userId');
+                      localStorage.removeItem('Expiration');
                       router.replace('/signin');
                     }}
                   >

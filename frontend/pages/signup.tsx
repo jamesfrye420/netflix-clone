@@ -67,7 +67,11 @@ const Signup: NextPage = () => {
         throw new Error('Could not signup');
       }
       //if the user is authinticed we get back a token, saving the token
-      Cookies.set('token', response.data.token, { expires: 60 });
+      const now = new Date().getTime();
+      Cookies.set('token', response.data.token, { expires: 23 });
+
+      localStorage.setItem('userId', response.data.token);
+      localStorage.setItem('Expiration', `${now + 1000 * 60 * 60 * 24 * 23}`);
 
       setAuthLoading(false);
       router.push('/browse');

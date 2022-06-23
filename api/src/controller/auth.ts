@@ -54,7 +54,7 @@ export const postSignin = async (req: Request<{}, {}, Signin, {}>, res: Response
         userId: loadedUser._id.toString(),
       },
       'secret',
-      { expiresIn: '60d' }
+      { expiresIn: '24d' }
     );
     return res
       .status(200)
@@ -103,7 +103,7 @@ export const putSignup = async (req: Request<{}, {}, Signup, {}>, res: Response,
         userId: savedUser._id.toString(),
       },
       'secret',
-      { expiresIn: '60d' }
+      { expiresIn: '24d' }
     );
 
     return res.status(201).json({ message: 'user created', token, userId: savedUser._id.toString(), User: savedUser });
