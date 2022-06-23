@@ -72,16 +72,14 @@ const Browse: NextPage<Props> = ({ content, configuration }: InferGetStaticProps
 
     const currentTime = new Date().getTime();
     if (!expirationDuration || currentTime > +expirationDuration) {
-      Cookies.remove('token');
-      localStorage.removeItem('userId');
+      localStorage.removeItem('userToken');
       localStorage.removeItem('Expiration');
       router.replace('/signin');
     } else {
       const interval = +expirationDuration - currentTime;
       const timer = () =>
         setTimeout(() => {
-          Cookies.remove('token');
-          localStorage.removeItem('userId');
+          localStorage.removeItem('userToken');
           localStorage.removeItem('Expiration');
           router.replace('/signin');
         }, interval);
@@ -97,9 +95,8 @@ const Browse: NextPage<Props> = ({ content, configuration }: InferGetStaticProps
   // check if the value has been tampered with, if true then sign out the user
   useEffect(() => {
     const handleValidationToken = (e: any) => {
-      if ((e.key === 'userId' && e.oldValue && !e.newValue) || !(e.key === 'userId')) {
-        Cookies.remove('token');
-        localStorage.removeItem('userId');
+      if ((e.key === 'userToken' && e.oldValue && !e.newValue) || !(e.key === 'userToken')) {
+        localStorage.removeItem('userToken');
         localStorage.removeItem('Expiration');
         router.replace('/signin');
       }
@@ -157,8 +154,7 @@ const Browse: NextPage<Props> = ({ content, configuration }: InferGetStaticProps
                 <Header.Group>
                   <Header.TextLink
                     onClick={() => {
-                      Cookies.remove('token');
-                      localStorage.removeItem('userId');
+                      localStorage.removeItem('userToken');
                       localStorage.removeItem('Expiration');
                       router.replace('/signin');
                     }}

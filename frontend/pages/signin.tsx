@@ -2,7 +2,6 @@ import React, { useContext, useState, useEffect } from 'react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import axios from 'axios';
-import Cookies from 'js-cookie';
 
 import type { NextPage } from 'next';
 
@@ -42,6 +41,18 @@ const Signin: NextPage = () => {
 
   const isInvalid = password === '' || emailAddress === '';
 
+  useEffect(() => {
+    const handleValidationToken = (e: any) => {
+      if (e.key === 'userToken' && e.newValue) {
+        router.replace('/browse/movies');
+      }
+    };
+    window.addEventListener('storage', handleValidationToken);
+    return () => {
+      window.removeEventListener('storage', handleValidationToken);
+    };
+  }, []);
+
   const handleSignin = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
@@ -65,8 +76,7 @@ const Signin: NextPage = () => {
 
       //if the user is authenticated we get back a token, saving the token
       const now = new Date().getTime();
-      Cookies.set('token', data.token, { expires: 23 });
-      localStorage.setItem('userId', data.userId);
+      localStorage.setItem('userToken', data.token);
       localStorage.setItem('Expiration', `${now + 1000 * 60 * 60 * 24 * 23}`);
       setAuthLoading(false);
       router.push('/browse');

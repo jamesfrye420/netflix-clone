@@ -147,12 +147,13 @@ Card.IsFavourite = function CardIsFavourite({
   const updateWatchListHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     setInWatchLater((prev) => !prev);
+    const token = typeof window === 'undefined' ? null : localStorage.getItem('userToken');
     const response = axios({
       method: 'PATCH',
       url: `content/${slug}/updateWatchlist/${contentId}`,
       baseURL: `${process.env.url}`,
       headers: {
-        Authorization: `Bearer ${Cookies.get('token')}`,
+        Authorization: `Bearer ${token}`,
       },
     });
   };

@@ -22,7 +22,7 @@ const fetcher = async (url: string, token: string) => {
 };
 
 export default function useUser({ redirectTo = '', redirectIfFound = false } = {}) {
-  const token = Cookies.get('token');
+  const token = typeof window === 'undefined' ? null : localStorage.getItem('userToken');
   const {
     data: User,
     mutate: mutateUser,
